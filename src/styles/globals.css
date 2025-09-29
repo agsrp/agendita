@@ -1,0 +1,999 @@
+/* Material Design 3 Expressive Color System */
+:root {
+    /* Tonal Palette de Azul para el tema primario */
+    --primary: #1967D2; /* Azul primario principal */
+    --on-primary: #FFFFFF;
+    --primary-container: #D1E4FF; /* Azul claro para contenedores */
+    --on-primary-container: #001F36; /* Texto sobre contenedores primarios */
+
+    /* Tonal Palette de Púrpura para el tema secundario (como en el original) */
+    --secondary: #625B71; /* Púrpura secundario */
+    --on-secondary: #FFFFFF;
+    --secondary-container: #E8DEF8; /* Púrpura claro */
+    --on-secondary-container: #1D192B;
+
+    /* Tonal Palette de Rosa para el tema terciario */
+    --tertiary: #7D5260; /* Rosa terciario */
+    --on-tertiary: #FFFFFF;
+    --tertiary-container: #FFD8E4; /* Rosa claro */
+    --on-tertiary-container: #31111D;
+
+    /* Error */
+    --error: #B3261E;
+    --on-error: #FFFFFF;
+    --error-container: #F9DEDC;
+    --on-error-container: #410E0B;
+
+    /* Fondo y Superficie */
+    --background: #FFFBFE; /* Fondo claro general */
+    --on-background: #1C1B1F; /* Texto sobre fondo */
+    --surface: #FFFBFE; /* Superficie principal */
+    --on-surface: #1C1B1F; /* Texto sobre superficie */
+    --surface-variant: #E7E0EC; /* Superficie secundaria */
+    --on-surface-variant: #49454F; /* Texto secundario */
+    --outline: #79747E; /* Líneas de contorno */
+    --shadow: #000000; /* Sombra */
+    --inverse-surface: #313033; /* Superficie invertida */
+    --inverse-on-surface: #F4EFF4; /* Texto sobre superficie invertida */
+    --inverse-primary: #AECBFA; /* Primario invertido */
+    --surface-tint: #1967D2; /* Tinte de la superficie (igual al primario) */
+
+    /* Tipografía */
+    --font-family: 'Roboto Flex', 'Roboto', sans-serif;
+
+    /* Formas */
+    --shape-corner-extra-small: 4px;
+    --shape-corner-small: 8px;
+    --shape-corner-medium: 12px;
+    --shape-corner-large: 16px;
+    --shape-corner-extra-large: 28px;
+
+    /* Elevación */
+    --elevation-1: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+    --elevation-2: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+    --elevation-3: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px rgba(0, 0, 0, 0.3);
+
+    /* Transiciones */
+    --motion-duration-short: 150ms;
+    --motion-duration-medium: 250ms;
+    --motion-duration-long: 350ms;
+    --motion-easing-standard: cubic-bezier(0.2, 0.0, 0, 1.0);
+    --motion-easing-emphasized: cubic-bezier(0.2, 0.0, 0, 1.0);
+}
+
+/* Tema Oscuro */
+.dark-theme {
+    --primary: #AECBFA;
+    --on-primary: #00335A;
+    --primary-container: #004A7F;
+    --on-primary-container: #D1E4FF;
+    --secondary: #CCC2DC;
+    --on-secondary: #332D41;
+    --secondary-container: #4A4458;
+    --on-secondary-container: #E8DEF8;
+    --tertiary: #EFB8C8;
+    --on-tertiary: #492532;
+    --tertiary-container: #633B48;
+    --on-tertiary-container: #FFD8E4;
+    --error: #F2B8B5;
+    --on-error: #601410;
+    --error-container: #8C1D18;
+    --on-error-container: #F9DEDC;
+    --background: #1C1B1F;
+    --on-background: #E6E1E5;
+    --surface: #1C1B1F;
+    --on-surface: #E6E1E5;
+    --surface-variant: #49454F;
+    --on-surface-variant: #CAC4D0;
+    --outline: #938F99;
+    --inverse-surface: #E6E1E5;
+    --inverse-on-surface: #313033;
+    --inverse-primary: #1967D2;
+    --surface-tint: #AECBFA;
+}
+
+/* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background);
+    color: var(--on-surface);
+    transition: background-color var(--motion-duration-medium) var(--motion-easing-standard);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* Contenedor principal de la aplicación */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Barra de Navegación */
+.navigation-bar {
+    width: 360px;
+    background-color: var(--surface);
+    box-shadow: var(--elevation-2);
+    padding: 24px 16px;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+    transition: transform var(--motion-duration-medium) var(--motion-easing-standard);
+    border-end-end-radius: var(--shape-corner-large);
+    border-start-end-radius: var(--shape-corner-large);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    transform: translateX(0); /* Valor por defecto */
+}
+
+/* Estilo para el menú móvil cerrado */
+@media (max-width: 768px) {
+    .navigation-bar {
+        transform: translateX(-100%); /* Oculto fuera de la pantalla */
+        width: 280px; /* Ancho en móvil */
+    }
+    /* Estilo para el menú móvil abierto */
+    .navigation-bar.open {
+        transform: translateX(0); /* Visible en la pantalla */
+    }
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32px;
+    padding: 8px;
+}
+
+.logo-icon {
+    font-size: 28px;
+    color: var(--primary);
+    margin-right: 12px;
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--on-surface);
+    letter-spacing: 0.5px;
+}
+
+.nav-section {
+    margin-bottom: 24px;
+}
+
+.nav-section-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 16px 0 8px 16px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    margin: 4px 8px;
+    border-radius: var(--shape-corner-medium);
+    cursor: pointer;
+    transition: all var(--motion-duration-short) var(--motion-easing-standard);
+    color: var(--on-surface-variant);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.nav-item:hover {
+    background-color: var(--surface-variant);
+    color: var(--on-surface);
+}
+
+.nav-item.active {
+    background-color: var(--primary-container);
+    color: var(--on-primary-container);
+}
+
+.nav-item i {
+    margin-right: 12px;
+    font-size: 24px;
+}
+
+/* Contenido Principal */
+.main-content {
+    flex: 1;
+    margin-left: 360px; /* Margen por defecto */
+    padding: 32px;
+    transition: margin-left var(--motion-duration-medium) var(--motion-easing-standard);
+}
+
+/* Ajuste del margen del contenido principal en móvil */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 24px 16px;
+    }
+    .header {
+        padding-top: 60px; /* Espacio para el botón de menú */
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--outline);
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--on-surface);
+    letter-spacing: -0.5px;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 28px;
+    color: var(--on-surface);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.theme-toggle:hover {
+    background-color: var(--surface-variant);
+}
+
+main-content
+
+/* Botón Flotante de Acción (FAB) */
+.fab {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background-color: var(--primary);
+    color: var(--on-primary);
+    border: none;
+    box-shadow: var(--elevation-3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    z-index: 1000;
+    transition: all var(--motion-duration-medium) var(--motion-easing-emphasized);
+}
+
+.fab:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+/* Menú del FAB */
+.fab-menu {
+    position: fixed;
+    bottom: 90px;
+    right: 32px;
+    z-index: 1001;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fab-menu.open {
+    display: flex; /* Mostrar cuando el padre tenga la clase open */
+}
+
+.fab-menu-item {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: var(--secondary-container);
+    color: var(--on-secondary-container);
+    border: none;
+    box-shadow: var(--elevation-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.fab-menu-item:hover {
+    background-color: var(--primary-container);
+    color: var(--on-primary-container);
+    transform: scale(1.1);
+}
+
+.fab-menu-item-label {
+    position: absolute;
+    right: 60px;
+    background-color: var(--surface-variant);
+    color: var(--on-surface-variant);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.fab-menu-item:hover .fab-menu-item-label {
+    opacity: 1;
+}
+
+/* Grilla del Dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+/* Tarjeta Genérica */
+.card {
+    background-color: var(--surface);
+    border-radius: var(--shape-corner-large);
+    padding: 24px;
+    box-shadow: var(--elevation-1);
+    transition: all var(--motion-duration-medium) var(--motion-easing-standard);
+    border: 1px solid var(--outline);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--elevation-2);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--on-surface);
+}
+
+.card-content {
+    color: var(--on-surface-variant);
+}
+
+/* Lista de Tareas */
+.task-list {
+    list-style: none;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    margin-bottom: 8px;
+    background-color: var(--surface);
+    border-radius: var(--shape-corner-medium);
+    box-shadow: var(--elevation-1);
+    transition: all var(--motion-duration-short) var(--motion-easing-standard);
+    border-left: 4px solid transparent; /* Para las clases de color */
+}
+
+.task-item:hover {
+    box-shadow: var(--elevation-2);
+}
+
+.task-checkbox {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    border: 2px solid var(--outline);
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.task-checkbox:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.task-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--on-primary);
+    font-size: 12px;
+}
+
+.task-content {
+    flex: 1;
+}
+
+.task-title {
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: var(--on-surface);
+}
+
+.task-meta {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+}
+
+/* Modal Genérico */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    animation: fadeIn var(--motion-duration-medium) var(--motion-easing-standard);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: var(--surface);
+    border-radius: var(--shape-corner-large);
+    padding: 32px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--elevation-3);
+    animation: slideIn var(--motion-duration-medium) var(--motion-easing-emphasized);
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px) scale(0.95); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--on-surface);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--on-surface);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.close-modal:hover {
+    background-color: var(--surface-variant);
+}
+
+/* Formularios */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--on-surface);
+    font-size: 14px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid var(--outline);
+    border-radius: var(--shape-corner-medium);
+    background-color: var(--surface);
+    color: var(--on-surface);
+    font-family: var(--font-family);
+    font-size: 16px;
+    transition: border-color var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-container);
+}
+
+/* Botones */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: var(--shape-corner-medium);
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-weight: 500;
+    transition: all var(--motion-duration-short) var(--motion-easing-standard);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--on-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-container);
+    color: var(--on-primary-container);
+}
+
+.btn-secondary {
+    background-color: var(--surface-variant);
+    color: var(--on-surface-variant);
+}
+
+.btn-secondary:hover {
+    background-color: var(--on-surface-variant);
+    color: var(--surface-variant);
+}
+
+/* Calendario - react-calendar */
+/* Estilos para el contenedor del calendario */
+.calendar-container {
+    background-color: var(--surface);
+    border-radius: var(--shape-corner-large);
+    padding: 24px;
+    box-shadow: var(--elevation-1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%; /* Asegura que no se salga del contenedor */
+}
+
+/* Estilos para el componente react-calendar */
+.react-calendar {
+    width: 100%;
+    border: none;
+    background-color: var(--surface);
+    color: var(--on-surface);
+    border-radius: var(--shape-corner-large);
+    box-shadow: none;
+    font-family: var(--font-family);
+    padding: 0;
+}
+
+/* Header del calendario */
+.react-calendar__navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--outline);
+}
+
+.react-calendar__navigation__label {
+    font-weight: 500;
+    color: var(--on-surface);
+    font-size: 18px;
+    margin: 0;
+}
+
+.react-calendar__navigation__arrow {
+    background-color: var(--surface-variant);
+    color: var(--on-surface-variant);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color var(--motion-duration-short) var(--motion-easing-standard);
+    font-size: 16px; /* Ajusta el tamaño de la flecha */
+}
+
+.react-calendar__navigation__arrow:hover {
+    background-color: var(--primary-container);
+    color: var(--on-primary-container);
+}
+
+/* Días de la semana */
+.react-calendar__month-view__weekdays {
+    text-align: center;
+    font-weight: 500;
+    color: var(--on-surface-variant);
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+    padding: 8px 0;
+}
+
+/* Días del mes */
+.react-calendar__month-view__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+
+}
+
+.react-calendar__tile {
+    padding: 10px;
+    text-align: center;
+    min-height: 80px; /* Ajusta la altura mínima */
+    cursor: pointer;
+    border-radius: var(--shape-corner-small);
+    transition: all var(--motion-duration-short) var(--motion-easing-standard);
+    background-color: var(--surface-variant);
+    color: var(--on-surface-variant);
+    border: 1px solid transparent; /* Borde transparente para mantener consistencia */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: relative; /* Para posicionar eventos */
+}
+
+.react-calendar__tile:hover {
+    background-color: var(--primary-container);
+    color: var(--on-primary-container);
+    border-color: var(--primary-container);
+}
+
+.react-calendar__tile--now {
+    background-color: var(--primary);
+    color: var(--on-primary);
+    border-color: var(--primary);
+}
+
+.react-calendar__tile--now:hover {
+    background-color: var(--on-primary);
+    color: var(--primary);
+    border-color: var(--on-primary);
+}
+
+.react-calendar__tile--active {
+    background-color: var(--primary-container);
+    color: var(--on-primary-container);
+    border-color: var(--primary);
+}
+
+.react-calendar__tile--active:hover {
+    background-color: var(--primary);
+    color: var(--on-primary);
+    border-color: var(--primary);
+}
+
+/* Días del mes anterior/siguiente */
+.react-calendar__tile--neighboringMonth {
+    color: var(--on-surface-variant);
+    opacity: 0.5;
+}
+
+/* Día seleccionado (si aplica) */
+.react-calendar__tile--hasActive {
+    background-color: var(--primary-container);
+    color: var(--on-primary-container);
+    border-color: var(--primary);
+}
+
+/* Contenido del día (número y eventos) */
+.react-calendar__tile abbr {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    text-decoration: none;
+}
+
+/* Contenedor para los eventos del día */
+.calendar-day-events {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px; /* Espacio entre eventos */
+    justify-content: center;
+    margin-top: auto; /* Empuja los eventos hacia abajo */
+}
+
+/* Evento individual en el día */
+.calendar-day-event {
+    background-color: var(--primary);
+    color: var(--on-primary);
+    border-radius: 10px;
+    padding: 2px 4px; /* Reduce el padding */
+    font-size: 10px; /* Reduce el tamaño de fuente */
+    display: inline-block;
+    cursor: pointer;
+    max-width: 100%; /* Asegura que no desborde */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2; /* Ajusta la altura de línea */
+}
+
+/* Gráficos */
+.chart-container {
+    background-color: var(--surface);
+    border-radius: var(--shape-corner-large);
+    padding: 24px;
+    box-shadow: var(--elevation-1);
+    margin-bottom: 24px;
+}
+
+.chart {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    margin: 20px 0;
+}
+
+.chart-bar {
+    height: 30px;
+    background-color: var(--surface-variant);
+    border-radius: 15px;
+    margin: 10px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-bar-fill {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    color: var(--on-primary);
+    font-weight: 500;
+    transition: width 1s ease-in-out;
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.chart-label {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+}
+
+.pie-chart {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--primary) 0% 40%,
+        var(--secondary) 40% 70%,
+        var(--tertiary) 70% 100%
+    );
+    margin: 0 auto;
+}
+
+/* Temas de Exámenes */
+.topic-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.topic-checkbox {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    border: 2px solid var(--outline);
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.topic-checkbox:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.topic-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--on-primary);
+    font-size: 12px;
+}
+
+.topic-content {
+    flex: 1;
+}
+
+.topic-title {
+    font-weight: 500;
+    margin-bottom: 2px;
+    color: var(--on-surface);
+}
+
+.topic-meta {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+}
+
+/* Slider de Preparación */
+.preparation-slider {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface-variant);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.preparation-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+}
+
+.preparation-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: none;
+}
+
+/* Estilos responsivos */
+@media (max-width: 1024px) {
+    .navigation-bar {
+        width: 280px;
+    }
+    .main-content {
+        margin-left: 0px;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 101;
+        background: var(--primary);
+        color: var(--on-primary);
+        border: none;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: var(--elevation-2);
+    }
+    .menu-toggle.hidden {
+        display: none;
+    }
+    .fab {
+        bottom: 24px;
+        right: 24px;
+    }
+    /* Ajustes específicos para móviles */
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Una columna en móvil */
+    }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px; /* Espacio entre título y acciones */
+    }
+    .page-title {
+        font-size: 24px; /* Reduce el tamaño del título */
+    }
+    .user-actions {
+        align-self: flex-end; /* Alinea las acciones a la derecha */
+    }
+    .card {
+        padding: 16px; /* Reduce el padding */
+    }
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px; /* Espacio entre título e icono/botón */
+    }
+    .card-title {
+        font-size: 16px; /* Reduce el tamaño del título de la tarjeta */
+    }
+    .task-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px; /* Espacio entre checkbox, contenido y botón */
+    }
+    .task-content {
+        width: 100%; /* Asegura que el contenido ocupe el ancho */
+    }
+    .fab-menu {
+        bottom: 80px; /* Ajusta la posición en móviles */
+    }
+    .fab-menu-item {
+        width: 40px; /* Reduce el tamaño de los botones del FAB */
+        height: 40px;
+    }
+    .fab-menu-item-label {
+        display: none; /* Oculta las etiquetas en móviles */
+    }
+}
+
+/* Clases utilitarias */
+.hidden {
+    display: none;
+}
+
+.priority-high { color: var(--error); }
+.priority-medium { color: var(--tertiary); }
+.priority-low { color: var(--secondary); }
+
+.subject-color-1 { border-left: 4px solid var(--primary); }
+.subject-color-2 { border-left: 4px solid var(--secondary); }
+.subject-color-3 { border-left: 4px solid var(--tertiary); }
+.subject-color-4 { border-left: 4px solid var(--primary-container); }
