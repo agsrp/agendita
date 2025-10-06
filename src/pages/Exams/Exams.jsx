@@ -1,33 +1,30 @@
 import React, { useState } from 'react';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import Modal from '../../components/Modal/Modal';
-import ExamForm from '../../components/ExamForm/ExamForm'; // Asumiendo que lo creas
+import ExamForm from '../../components/ExamForm/ExamForm';
 
-const Exams = () => {
+const Exams = ({ showExamModal = false, onCloseExamModal }) => {
     const [exams, setExams] = useLocalStorage('exams', []);
-    const [showExamModal, setShowExamModal] = useState(false);
     const [editingExam, setEditingExam] = useState(null);
 
     const handleAddExam = () => {
         setEditingExam(null);
-        setShowExamModal(true);
+        if (onCloseExamModal) onCloseExamModal(); // Cierra el modal si estaba abierto por otra acción
     };
 
     const handleEditExam = (exam) => {
         setEditingExam(exam);
-        setShowExamModal(true);
+        if (onCloseExamModal) onCloseExamModal(); // Cierra el modal si estaba abierto por otra acción
     };
 
     const handleExamFormSubmit = (formData) => {
         if (editingExam) {
-            // Editar
             setExams(prev => prev.map(e => e.id === editingExam.id ? { ...e, ...formData } : e));
         } else {
-            // Crear
             const newExam = { id: Date.now(), preparation: 0, topics: [], ...formData };
             setExams(prev => [...prev, newExam]);
         }
-        setShowExamModal(false);
+        if (onCloseExamModal) onCloseExamModal(); // Cierra el modal después de guardar
     };
 
     const handleTopicToggle = (examId, topicId) => {
@@ -73,6 +70,8 @@ const Exams = () => {
                 <div className="dashboard-grid" id="examsGrid">
                     {exams.map(exam => {
                         const priorityClass = `priority-${exam.priority || 'high'}`;
+                        const calculatedPreparation = exam.topics.length ? Math.round((exam.topics.filter(t => t.studied).length / exam.topics.length) * 100) : 0;
+
                         return (
                             <div key={exam.id} className="card">
                                 <div className="card-header">
@@ -82,15 +81,29 @@ const Exams = () => {
                                 <div className="card-content">
                                     <p>Fecha: {formatDate(exam.date)}</p>
                                     <p>Materia: {exam.subject}</p>
-                                    <p>Preparación: {exam.preparation}%</p>
+                                    <p>Preparación: {calculatedPreparation}%</p>
                                     <div style={{ marginTop: '10px' }}>
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
-                                            value={exam.preparation}
+                                            value={calculatedPreparation}
                                             className="preparation-slider"
                                             disabled
+                                        />
+                                    </div>
+                                    <div style={{ marginTop: '15px' }}>
+                                        <label htmlFor={`score-${exam.id}`} className="form-label">Nota (0-10):</label>
+                                        <input
+                                            id={`score-${exam.id}`}
+                                            type="number"
+                                            min="0"
+                                            max="10"
+                                            step="0.1"
+                                            value={exam.score ?? ''}
+                                            onChange={(e) => handleScoreChange(exam.id, e.target.value)}
+                                            className="form-input"
+                                            style={{ width: '80px' }}
                                         />
                                     </div>
                                     <h4 style={{ margin: '15px 0 10px 0' }}>Temas a estudiar:</h4>
@@ -110,7 +123,16 @@ const Exams = () => {
                                             </div>
                                         ))}
                                     </div>
-                                    <button className="btn btn-secondary" onClick={() => handleEditExam(exam)} style={{ marginTop: '10px' }}>Editar Examen</button>
+                                    <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                                        <button className="btn btn-secondary" onClick={() => handleEditExam(exam)}>Editar Examen</button>
+                                        <button
+                                            className="btn btn-secondary"
+                                            onClick={() => handleDeleteExam(exam.id)}
+                                            style={{ backgroundColor: 'var(--error)', color: 'var(--on-error)' }}
+                                        >
+                                            <MdDelete style={{ marginRight: '4px' }} /> Eliminar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -118,8 +140,9 @@ const Exams = () => {
                 </div>
             </div>
 
+            {/* Modal controlado por props */}
             {showExamModal && (
-                <Modal title={editingExam ? `Editar Examen: ${editingExam.title}` : 'Nuevo Examen'} onClose={() => setShowExamModal(false)}>
+                <Modal title={editingExam ? `Editar Examen: ${editingExam.title}` : 'Nuevo Examen'} onClose={onCloseExamModal}>
                     <ExamForm onSubmit={handleExamFormSubmit} initialData={editingExam} />
                 </Modal>
             )}

@@ -1,33 +1,30 @@
 import React, { useState } from 'react';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import Modal from '../../components/Modal/Modal';
-import SubjectForm from '../../components/SubjectForm/SubjectForm'; // Asumiendo que lo creas
+import SubjectForm from '../../components/SubjectForm/SubjectForm';
 
-const Subjects = () => {
+const Subjects = ({ showSubjectModal = false, onCloseSubjectModal }) => {
     const [subjects, setSubjects] = useLocalStorage('subjects', []);
-    const [showSubjectModal, setShowSubjectModal] = useState(false);
     const [editingSubject, setEditingSubject] = useState(null);
 
     const handleAddSubject = () => {
         setEditingSubject(null);
-        setShowSubjectModal(true);
+        if (onCloseSubjectModal) onCloseSubjectModal(); // Cierra el modal si estaba abierto por otra acción
     };
 
     const handleEditSubject = (subject) => {
         setEditingSubject(subject);
-        setShowSubjectModal(true);
+        if (onCloseSubjectModal) onCloseSubjectModal(); // Cierra el modal si estaba abierto por otra acción
     };
 
     const handleSubjectFormSubmit = (formData) => {
         if (editingSubject) {
-            // Editar
             setSubjects(prev => prev.map(s => s.id === editingSubject.id ? { ...s, ...formData } : s));
         } else {
-            // Crear
             const newSubject = { id: Date.now(), ...formData };
             setSubjects(prev => [...prev, newSubject]);
         }
-        setShowSubjectModal(false);
+        if (onCloseSubjectModal) onCloseSubjectModal(); // Cierra el modal después de guardar
     };
 
     return (
@@ -55,8 +52,9 @@ const Subjects = () => {
                 </div>
             </div>
 
+            {/* Modal controlado por props */}
             {showSubjectModal && (
-                <Modal title={editingSubject ? `Editar Materia: ${editingSubject.name}` : 'Nueva Materia'} onClose={() => setShowSubjectModal(false)}>
+                <Modal title={editingSubject ? `Editar Materia: ${editingSubject.name}` : 'Nueva Materia'} onClose={onCloseSubjectModal}>
                     <SubjectForm onSubmit={handleSubjectFormSubmit} initialData={editingSubject} />
                 </Modal>
             )}

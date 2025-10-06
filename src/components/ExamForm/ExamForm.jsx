@@ -8,7 +8,8 @@ const ExamForm = ({ onSubmit, initialData = null }) => {
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
         subject: initialData?.subject || '',
-        date: initialData?.date || ''
+        date: initialData?.date || '',
+        score: initialData?.score ?? '' // Manejar score como string vacío si es null o undefined
     });
 
     const handleChange = (e) => {
@@ -37,7 +38,9 @@ const ExamForm = ({ onSubmit, initialData = null }) => {
         e.preventDefault();
         // Asegura que los topics vacíos no se guarden
         const filteredTopics = topics.filter(topic => topic.name.trim() !== '');
-        onSubmit({ ...formData, topics: filteredTopics });
+        // Convierte score a número o null
+        const scoreValue = formData.score === '' ? null : parseFloat(formData.score);
+        onSubmit({ ...formData, score: scoreValue, topics: filteredTopics });
     };
 
     return (
@@ -56,6 +59,20 @@ const ExamForm = ({ onSubmit, initialData = null }) => {
             <div className="form-group">
                 <label className="form-label">Fecha del Examen</label>
                 <input type="date" className="form-input" name="date" value={formData.date} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+                <label className="form-label">Nota (0-10)</label>
+                <input
+                    type="number"
+                    className="form-input"
+                    name="score"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={formData.score}
+                    onChange={handleChange}
+                    placeholder="Ej: 8.5"
+                />
             </div>
             <div className="form-group">
                 <label className="form-label">Temas a Estudiar</label>

@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import Modal from '../../components/Modal/Modal';
-import TaskForm from '../../components/TaskForm/TaskForm'; // Asumiendo que ya lo creaste
+import TaskForm from '../../components/TaskForm/TaskForm';
 
-const Tasks = () => {
+const Tasks = ({ showTaskModal = false, onCloseTaskModal }) => {
     const [tasks, setTasks] = useLocalStorage('tasks', []);
-    const [showTaskModal, setShowTaskModal] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
 
     const handleAddTask = () => {
         setEditingTask(null);
-        setShowTaskModal(true);
+        if (onCloseTaskModal) onCloseTaskModal(); // Cierra el modal si estaba abierto por otra acción
     };
 
     const handleEditTask = (task) => {
         setEditingTask(task);
-        setShowTaskModal(true);
+        if (onCloseTaskModal) onCloseTaskModal(); // Cierra el modal si estaba abierto por otra acción
     };
 
     const handleTaskToggle = (taskId) => {
@@ -24,14 +23,12 @@ const Tasks = () => {
 
     const handleTaskFormSubmit = (formData) => {
         if (editingTask) {
-            // Editar
             setTasks(prev => prev.map(t => t.id === editingTask.id ? { ...t, ...formData } : t));
         } else {
-            // Crear
             const newTask = { id: Date.now(), completed: false, ...formData };
             setTasks(prev => [...prev, newTask]);
         }
-        setShowTaskModal(false);
+        if (onCloseTaskModal) onCloseTaskModal(); // Cierra el modal después de guardar
     };
 
     const getPriorityText = (priority) => {
@@ -82,8 +79,9 @@ const Tasks = () => {
                 </ul>
             </div>
 
+            {/* Modal controlado por props */}
             {showTaskModal && (
-                <Modal title={editingTask ? `Editar Tarea: ${editingTask.title}` : 'Nueva Tarea'} onClose={() => setShowTaskModal(false)}>
+                <Modal title={editingTask ? `Editar Tarea: ${editingTask.title}` : 'Nueva Tarea'} onClose={onCloseTaskModal}>
                     <TaskForm onSubmit={handleTaskFormSubmit} initialData={editingTask} />
                 </Modal>
             )}

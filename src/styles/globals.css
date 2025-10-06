@@ -39,7 +39,7 @@
     --surface-tint: #1967D2; /* Tinte de la superficie (igual al primario) */
 
     /* Tipografía */
-    --font-family: 'Roboto Flex', 'Roboto', sans-serif;
+    --font-family: 'Roboto Flex', 'Roboto', sans-serif; /* Fuente original */
 
     /* Formas */
     --shape-corner-extra-small: 4px;
@@ -264,8 +264,6 @@ body {
 .theme-toggle:hover {
     background-color: var(--surface-variant);
 }
-
-main-content
 
 /* Botón Flotante de Acción (FAB) */
 .fab {
@@ -654,19 +652,24 @@ main-content
     text-align: center;
     font-weight: 500;
     color: var(--on-surface-variant);
-    font-size: 12px;
+    font-size: 14px;
     margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* Asegura 7 columnas */
 }
 
 .react-calendar__month-view__weekdays__weekday {
     padding: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra el texto */
 }
 
 /* Días del mes */
 .react-calendar__month-view__days {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-
+    grid-template-columns: repeat(7, 1fr); /* Asegura 7 columnas */
+    gap: 4px; /* Reduce el espacio entre celdas */
 }
 
 .react-calendar__tile {
@@ -679,10 +682,10 @@ main-content
     background-color: var(--surface-variant);
     color: var(--on-surface-variant);
     border: 1px solid transparent; /* Borde transparente para mantener consistencia */
-    display: flex;
+    display: flex; /* Cambiado a flex para alinear contenido */
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Espacia el número del día y los eventos */
     position: relative; /* Para posicionar eventos */
 }
 
@@ -734,8 +737,11 @@ main-content
     display: block;
     font-size: 16px;
     font-weight: 500;
-    margin-bottom: 4px;
+    margin-bottom: 4px; /* Espacio entre número y eventos */
     text-decoration: none;
+    align-self: flex-start; /* Alinea el número a la izquierda */
+    width: 100%; /* Asegura que ocupe el ancho para alineación */
+    text-align: center; /* Centra el número */
 }
 
 /* Contenedor para los eventos del día */
@@ -746,6 +752,8 @@ main-content
     gap: 2px; /* Espacio entre eventos */
     justify-content: center;
     margin-top: auto; /* Empuja los eventos hacia abajo */
+    align-self: flex-start; /* Alinea el contenedor de eventos a la izquierda */
+    padding-top: 4px; /* Espacio superior dentro del contenedor de eventos */
 }
 
 /* Evento individual en el día */
@@ -762,6 +770,8 @@ main-content
     text-overflow: ellipsis;
     white-space: nowrap;
     line-height: 1.2; /* Ajusta la altura de línea */
+    text-align: center; /* Centra el texto del evento */
+    flex-shrink: 0; /* Evita que el evento se encoja */
 }
 
 /* Gráficos */
@@ -909,7 +919,7 @@ main-content
         width: 280px;
     }
     .main-content {
-        margin-left: 0px;
+        margin-left: 280px;
     }
 }
 

@@ -1,8 +1,11 @@
+// src/App.jsx
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import './styles/App.css'; // Asegúrate de importar el CSS principal aquí si no lo estás haciendo en main.jsx
-import {MdMenu, MdSchool, MdDashboard, MdMenuBook, MdChecklist, MdCalendarToday, MdAssignment, MdAnalytics, MdPerson, MdBrightness4, MdBrightness7 } from 'react-icons/md'; 
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom'; // Añadimos Navigate aquí
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase';
 import useLocalStorage from './hooks/useLocalStorage';
+import { MdMenu, MdSchool, MdDashboard, MdMenuBook, MdChecklist, MdCalendarToday, MdAssignment, MdAnalytics, MdPerson, MdBrightness4, MdBrightness7, MdAdd } from 'react-icons/md'; // Importa los iconos
+import './styles/App.css';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Subjects from './pages/Subjects/Subjets';
 import Tasks from './pages/Tasks/Tasks';
@@ -10,9 +13,10 @@ import CalendarPage from './pages/CalendarPage/CalendarPage';
 import Exams from './pages/Exams/Exams';
 import Stats from './pages/Stats/Stats';
 import Profile from './pages/Profile/Profile';
+import AuthPage from './pages/AuthPage/AuthPage';
 
 // Componente de la barra de navegación
-const NavigationBar = ({ activePage, setActivePage, theme, toggleTheme, menuOpen, setMenuOpen }) => {
+const NavigationBar = ({ activePage, setActivePage, theme, toggleTheme, menuOpen, setMenuOpen, profile }) => { // Recibe profile
     const location = useLocation();
 
     useEffect(() => {
@@ -27,11 +31,11 @@ const NavigationBar = ({ activePage, setActivePage, theme, toggleTheme, menuOpen
     }, [location, setActivePage, setMenuOpen]);
 
     const navItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: <MdDashboard/> },
-        { id: 'subjects', label: 'Materias', icon: <MdMenuBook/> },
-        { id: 'tasks', label: 'Tareas', icon: <MdChecklist/> },
-        { id: 'calendar', label: 'Calendario', icon: <MdCalendarToday/> },
-        { id: 'exams', label: 'Exámenes', icon: <MdAssignment/> },
+        { id: 'dashboard', label: 'Dashboard', icon: <MdDashboard /> },
+        { id: 'subjects', label: 'Materias', icon: <MdMenuBook /> },
+        { id: 'tasks', label: 'Tareas', icon: <MdChecklist /> },
+        { id: 'calendar', label: 'Calendario', icon: <MdCalendarToday /> },
+        { id: 'exams', label: 'Exámenes', icon: <MdAssignment /> },
         { id: 'stats', label: 'Estadísticas', icon: <MdAnalytics /> },
         { id: 'profile', label: 'Perfil', icon: <MdPerson /> },
     ];
@@ -39,8 +43,8 @@ const NavigationBar = ({ activePage, setActivePage, theme, toggleTheme, menuOpen
     return (
         <aside className={`navigation-bar ${menuOpen ? 'open' : ''}`} id="navigationBar">
             <div className="logo">
-                <MdSchool/>
-                <span className="logo-text"> Agendita </span>
+                <MdSchool className="logo-icon" /> {/* Reemplaza el span con el icono */}
+                <span className="logo-text">Agenda Digital</span>
             </div>
             <div className="nav-section">
                 <div className="nav-section-title">Principal</div>
@@ -51,7 +55,7 @@ const NavigationBar = ({ activePage, setActivePage, theme, toggleTheme, menuOpen
                         className={`nav-item ${activePage === item.id ? 'active' : ''}`}
                         onClick={() => setActivePage(item.id)}
                     >
-                        <span className="">{item.icon}</span>
+                        {item.icon} {/* Renderiza el icono directamente */}
                         {item.label}
                     </Link>
                 ))}
@@ -65,7 +69,7 @@ const NavigationBar = ({ activePage, setActivePage, theme, toggleTheme, menuOpen
                         className={`nav-item ${activePage === item.id ? 'active' : ''}`}
                         onClick={() => setActivePage(item.id)}
                     >
-                        <span className="">{item.icon}</span>
+                        {item.icon}
                         {item.label}
                     </Link>
                 ))}
@@ -96,11 +100,70 @@ const NavigationBar = ({ activePage, setActivePage, theme, toggleTheme, menuOpen
     );
 };
 
+// Componente de la cabecera
+const Header = ({ activePage, theme, toggleTheme }) => {
+    return (
+        <header className="header">
+            <h1 className="page-title" id="pageTitle">
+                {activePage.charAt(0).toUpperCase() + activePage.slice(1)}
+            </h1>
+            <div className="user-actions">
+                <button className="theme-toggle" id="themeToggle" onClick={toggleTheme}>
+                    {theme === 'dark' ? <MdBrightness7 /> : <MdBrightness4 />} {/* Reemplaza el span con el icono */}
+                </button>
+            </div>
+        </header>
+    );
+};
+
+// Componente FAB (ahora integrado en AppContent)
+const Fab = ({ onAddTask, onAddSubject, onAddExam }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setIsOpen(!isOpen);
+    };
+
+    const handleItemClick = (action) => {
+        action();
+        setIsOpen(false); // Cierra el menú después de la acción
+    };
+
+    return (
+        <div className="fab-container">
+            <button className="fab" onClick={toggleMenu}>
+                <MdAdd />
+            </button>
+            <div className={`fab-menu ${isOpen ? 'open' : ''}`}>
+                <button className="fab-menu-item" onClick={() => handleItemClick(onAddTask)}>
+                    <MdChecklist />
+                    <span className="fab-menu-item-label">Tarea</span>
+                </button>
+                <button className="fab-menu-item" onClick={() => handleItemClick(onAddSubject)}>
+                    <MdMenuBook />
+                    <span className="fab-menu-item-label">Materia</span>
+                </button>
+                <button className="fab-menu-item" onClick={() => handleItemClick(onAddExam)}>
+                    <MdAssignment />
+                    <span className="fab-menu-item-label">Examen</span>
+                </button>
+            </div>
+        </div>
+    );
+};
+
 // Componente principal de la aplicación
-function App() {
+function AppContent() {
     const [activePage, setActivePage] = useState('dashboard');
     const [theme, setTheme] = useLocalStorage('theme', 'light');
-    const [menuOpen, setMenuOpen] = useState(false); // Estado para el menú móvil
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    // Estados para modales globales del FAB
+    const [showTaskModal, setShowTaskModal] = useState(false);
+    const [showSubjectModal, setShowSubjectModal] = useState(false);
+    const [showExamModal, setShowExamModal] = useState(false);
+
+    const [profile] = useLocalStorage('profile', { fullName: 'Usuario', email: '', phone: '', photoURL: '' }); // Cargamos el perfil
 
     const toggleTheme = () => {
         setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -142,56 +205,94 @@ function App() {
         };
     }, [menuOpen]);
 
+    const handleAddTask = () => {
+        setShowTaskModal(true);
+    };
+
+    const handleAddSubject = () => {
+        setShowSubjectModal(true);
+    };
+
+    const handleAddExam = () => {
+        setShowExamModal(true);
+    };
+
+    // Funciones para cerrar modales
+    const handleCloseTaskModal = () => setShowTaskModal(false);
+    const handleCloseSubjectModal = () => setShowSubjectModal(false);
+    const handleCloseExamModal = () => setShowExamModal(false);
+
     return (
-        <Router>
+        <div className="app-container">
             {/* Botón de menú para móviles */}
             <button
                 className={`menu-toggle ${menuOpen ? 'hidden' : ''}`}
                 id="menuToggle"
                 onClick={toggleMenu}
             >
-                <MdMenu/>
+                <MdMenu /> {/* Reemplaza el span con el icono */}
             </button>
 
-            <div className="app-container">
-                {/* Barra de navegación */}
-                <NavigationBar
-                    activePage={activePage}
-                    setActivePage={setActivePage}
-                    theme={theme}
-                    toggleTheme={toggleTheme}
-                    menuOpen={menuOpen}
-                    setMenuOpen={setMenuOpen}
-                />
+            {/* Barra de navegación */}
+            <NavigationBar
+                activePage={activePage}
+                setActivePage={setActivePage}
+                theme={theme}
+                toggleTheme={toggleTheme}
+                menuOpen={menuOpen}
+                setMenuOpen={setMenuOpen}
+                profile={profile} // Pasa profile al componente
+            />
 
-                {/* Contenido principal */}
-                <main className="main-content" id="mainContent">
-                    <header className="header">
-                        <h1 className="page-title" id="pageTitle">
-                            {activePage.charAt(0).toUpperCase() + activePage.slice(1)}
-                        </h1>
-                        <div className="user-actions">
-                            <button className="theme-toggle" id="themeToggle" onClick={toggleTheme}>
-                                <span className="">
-                                    {theme === 'dark' ? <MdBrightness7/> : <MdBrightness4/>}
-                                </span>
-                            </button>
-                        </div>
-                    </header>
-                    <div id="pageContent">
-                        <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/subjects" element={<Subjects />} />
-                            <Route path="/tasks" element={<Tasks />} />
-                            <Route path="/calendar" element={<CalendarPage />} />
-                            <Route path="/exams" element={<Exams />} />
-                            <Route path="/stats" element={<Stats />} />
-                            <Route path="/profile" element={<Profile />} />
-                        </Routes>
-                    </div>
-                </main>
-            </div>
+            {/* Contenido principal */}
+            <main className="main-content" id="mainContent">
+                <Header activePage={activePage} theme={theme} toggleTheme={toggleTheme} />
+                <div id="pageContent">
+                    <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/subjects" element={<Subjects showSubjectModal={showSubjectModal} onCloseSubjectModal={handleCloseSubjectModal} />} />
+                        <Route path="/tasks" element={<Tasks showTaskModal={showTaskModal} onCloseTaskModal={handleCloseTaskModal} />} />
+                        <Route path="/calendar" element={<CalendarPage showTaskModal={showTaskModal} onCloseTaskModal={handleCloseTaskModal} />} />
+                        <Route path="/exams" element={<Exams showExamModal={showExamModal} onCloseExamModal={handleCloseExamModal} />} />
+                        <Route path="/stats" element={<Stats />} />
+                        <Route path="/profile" element={<Profile />} />
+                    </Routes>
+                </div>
+                {/* Agregar el FAB aquí dentro del main content */}
+                <Fab onAddTask={handleAddTask} onAddSubject={handleAddSubject} onAddExam={handleAddExam} />
+            </main>
+        </div>
+    );
+}
+
+function App() {
+    const [userUID, setUserUID] = useLocalStorage('userUID', null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUserUID(user.uid);
+            } else {
+                setUserUID(null);
+            }
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [setUserUID]);
+
+    if (loading) {
+        return <div className="loading">Cargando...</div>;
+    }
+
+    return (
+        <Router>
+            <Routes>
+                <Route path="/auth" element={!userUID ? <AuthPage /> : <Navigate to="/dashboard" />} />
+                <Route path="/*" element={userUID ? <AppContent /> : <Navigate to="/auth" />} />
+            </Routes>
         </Router>
     );
 }

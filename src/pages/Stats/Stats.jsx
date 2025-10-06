@@ -1,13 +1,20 @@
 import React from 'react';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import ChartContainer from '../../components/ChartContainer/ChartContainer'; // Asumiendo que lo creas
+import ChartContainer from '../../components/ChartContainer/ChartContainer';
+import { MdAnalytics, MdTrendingUp, MdEvent, MdMenuBook } from 'react-icons/md';
 
 const Stats = () => {
     const [tasks] = useLocalStorage('tasks', []);
     const [exams] = useLocalStorage('exams', []);
     const [subjects] = useLocalStorage('subjects', []);
 
-    // Lógica para calcular estadísticas
+    // Cálculo del rendimiento promedio de exámenes para stats
+    const examsWithScore = exams.filter(e => e.score !== null && e.score !== undefined);
+    const averageScore = examsWithScore.length > 0
+        ? (examsWithScore.reduce((sum, e) => sum + e.score, 0) / examsWithScore.length).toFixed(2)
+        : 'N/A';
+
+    // Lógica para calcular estadísticas de tareas
     const subjectCompletion = {};
     subjects.forEach(subject => {
         subjectCompletion[subject.name] = { total: 0, completed: 0 };
@@ -87,6 +94,7 @@ const Stats = () => {
                     <p>Tareas completadas esta semana: {tasksThisWeek}</p>
                     <p>Exámenes próximos esta semana: {examsThisWeek}</p>
                     <p>Materias activas: {subjects.length}</p>
+                    <p><strong>Rendimiento Promedio de Exámenes:</strong> {averageScore !== 'N/A' ? `${averageScore}/10` : 'Sin notas'}</p>
                 </div>
             </div>
         </div>
